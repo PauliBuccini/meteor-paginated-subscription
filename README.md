@@ -1,3 +1,5 @@
+Added functionality to original package
+
 # Meteor Paginated Subscription
 
 This package is an experiment that adds pagination to Meteor's standard subscriptions. It's a byproduct of the [Telescope project](http://telesc.pe).
