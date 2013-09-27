@@ -1,5 +1,7 @@
 Added functionality to original package
 
+git submodule add git@github.com:PauliBuccini/meteor-paginated-subscription.git packages/meteor-paginated-subscription-PB
+
 # Meteor Paginated Subscription
 
 This package is an experiment that adds pagination to Meteor's standard subscriptions. It's a byproduct of the [Telescope project](http://telesc.pe).
