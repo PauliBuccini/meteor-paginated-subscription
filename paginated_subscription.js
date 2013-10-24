@@ -27,7 +27,6 @@ PaginatedSubscriptionHandle.prototype.limit = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.ready = function() {
-  console.log('check i f ready')
   return this.loaded() === this.limit();
 }
 
