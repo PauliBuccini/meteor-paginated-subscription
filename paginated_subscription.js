@@ -40,6 +40,7 @@ PaginatedSubscriptionHandle.prototype.loadNextPage = function() {
   this._limitListeners.changed();
   // how many Loads
   this._loadedTimes ++;
+
   this._skipTimes = this._loadedTimes - 1;
 }
 
@@ -54,8 +55,14 @@ PaginatedSubscriptionHandle.prototype.done = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.reset = function() {
+  this._loadedTimes = 0;
   this._limit = this.perPage;
   this._limitListeners.changed();
+
+  this._skip = 0;
+  //  How many times skipped
+  this._skipTimes = 0;
+  this._skipTimesListeners.changed();
 }
 //  How many items to skip
 PaginatedSubscriptionHandle.prototype.skip = function() {
@@ -66,10 +73,14 @@ PaginatedSubscriptionHandle.prototype.skip = function() {
 
 //  Load skipped files
 PaginatedSubscriptionHandle.prototype.loadPreviuosPage = function() {
-  this._skipTimes --;
-  this._skipTimesListeners.changed();
+
+  if ((this._loaded - this._skip) === this.perPage * 2 ) {
+    this._loadedTimes --;
+    this._skipTimes --;
+    this._skipTimesListeners.changed();
   this._limit -= this.perPage;
   this._limitListeners.changed();
+  }
 }
 
 
