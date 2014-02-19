@@ -68,6 +68,8 @@ PaginatedSubscriptionHandle.prototype.skip = function() {
 PaginatedSubscriptionHandle.prototype.loadPreviuosPage = function() {
   this._skipTimes --;
   this._skipTimesListeners.changed();
+  this._limit -= this.perPage;
+  this._limitListeners.changed();
 }
 
 
