@@ -1,6 +1,7 @@
-PaginatedSubscriptionHandle = function(perPage) {
+PaginatedSubscriptionHandle = function(perPage, subName) {
 
   this.perPage = perPage;
+  this.subName = subName;
   //  Initinal skip number same as per page
   this.skipNumber = perPage;
   this._limit = perPage;
@@ -14,6 +15,19 @@ PaginatedSubscriptionHandle = function(perPage) {
   this._skipTimesListeners = new Deps.Dependency();
   //  How many times loaded, as a helper for skip method
   this._loadedTimes = 0;
+
+  this._total = perPage + 1;
+}
+
+PaginatedSubscriptionHandle.prototype.getTotal = function() {
+  var self = this;
+ Meteor.call('totalRecordsForpagination', self.subName, function (err,res) {
+  if (res) {
+    Session.set("total_" + self.subName, res)
+    self._total = res
+  }
+  // return res
+ })
 }
 
 PaginatedSubscriptionHandle.prototype.loaded = function() {
@@ -42,6 +56,7 @@ PaginatedSubscriptionHandle.prototype.loadNextPage = function() {
   this._loadedTimes ++;
 
   this._skipTimes = this._loadedTimes - 1;
+  this.getTotal();
 }
 
 PaginatedSubscriptionHandle.prototype.done = function() {
@@ -88,7 +103,8 @@ PaginatedSubscriptionHandle.prototype.loadPreviuosPage = function() {
 Meteor.subscribeWithPagination = function (/*name, arguments, perPage */) {
   var args = Array.prototype.slice.call(arguments, 0);
   var perPage = args.pop();
-  var handle = new PaginatedSubscriptionHandle(perPage);
+
+  var handle = new PaginatedSubscriptionHandle(perPage, args[1]);
 
   Meteor.autorun(function() {
     var ourArgs = _.map(args, function(arg) {
@@ -100,6 +116,8 @@ Meteor.subscribeWithPagination = function (/*name, arguments, perPage */) {
     ]));
     handle.stop = subHandle.stop;
   });
+
+  handle.getTotal()
 
   return handle;
 }

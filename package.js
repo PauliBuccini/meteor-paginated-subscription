@@ -3,5 +3,6 @@ Package.describe({
 });
 
 Package.on_use(function (api, where) {
-  api.add_files('paginated_subscription.js', 'client');
+  api.add_files('paginated_subscription_client.js', 'client');
+  api.add_files('paginated_subscription_server.js', 'server');
 });
