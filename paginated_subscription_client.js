@@ -1,4 +1,4 @@
-PaginatedSubscriptionHandle = function(perPage, subName) {
+PaginatedSubscriptionHandle = function(perPage, subName, query) {
 
   this.perPage = perPage;
   this.subName = subName;
@@ -17,11 +17,12 @@ PaginatedSubscriptionHandle = function(perPage, subName) {
   this._loadedTimes = 0;
 
   this._total = perPage + 1;
+  this.query = query
 }
 
 PaginatedSubscriptionHandle.prototype.getTotal = function() {
   var self = this;
- Meteor.call('totalRecordsForpagination', self.subName, function (err,res) {
+ Meteor.call('totalRecordsForpagination', self.subName, self.query, function (err,res) {
   if (res) {
     Session.set("total_" + self.subName, res)
     self._total = res
@@ -41,7 +42,7 @@ PaginatedSubscriptionHandle.prototype.limit = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.ready = function() {
-  return this.loaded() === this.limit();
+  return this.loaded() === this.limit() && this.loaded() < this._total;
 }
 
 // deprecated
@@ -104,7 +105,7 @@ Meteor.subscribeWithPagination = function (/*name, arguments, perPage */) {
   var args = Array.prototype.slice.call(arguments, 0);
   var perPage = args.pop();
 
-  var handle = new PaginatedSubscriptionHandle(perPage, args[1]);
+  var handle = new PaginatedSubscriptionHandle(perPage, args[1], (args[2] ? args[2] : {}));
 
   Meteor.autorun(function() {
     var ourArgs = _.map(args, function(arg) {

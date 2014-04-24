@@ -1,5 +1,5 @@
 Meteor.methods({
-  totalRecordsForpagination: function (subName) {
-    return subName ? Collection[subName].find({},{fields: {_id: 1}}).count() : 66;
+  totalRecordsForpagination: function (subName, query) {
+    return subName ? Collection[subName].find(query,{fields: {_id: 1}}).count() : 66;
   }
 })
