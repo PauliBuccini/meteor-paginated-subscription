@@ -1,5 +1,5 @@
 PaginatedSubscriptionHandle = function(perPage, subName, query, skipingValue, dar) {
-console.log(perPage, subName, query, skipingValue, dar)
+// console.log(perPage, subName, query, skipingValue, dar)
   this.perPage = perPage;
   this.subName = subName;
   //  Initinal skip number same as per page
