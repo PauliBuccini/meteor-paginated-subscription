@@ -1,9 +1,11 @@
-PaginatedSubscriptionHandle = function(perPage, subName, query) {
-
+PaginatedSubscriptionHandle = function(perPage, subName, query, skipingValue, dar) {
+console.log(perPage, subName, query, skipingValue, dar)
   this.perPage = perPage;
   this.subName = subName;
   //  Initinal skip number same as per page
   this.skipNumber = perPage;
+  // then to start skipping
+  this.skipStart = skipingValue;
   this._limit = perPage;
   this._limitListeners = new Deps.Dependency();
   this._loaded = 0;
@@ -16,7 +18,9 @@ PaginatedSubscriptionHandle = function(perPage, subName, query) {
   //  How many times loaded, as a helper for skip method
   this._loadedTimes = 0;
 
+//  total records on collection
   this._total = perPage + 1;
+  // query for publish method
   this.query = query
 }
 
@@ -53,10 +57,13 @@ PaginatedSubscriptionHandle.prototype.loading = function() {
 PaginatedSubscriptionHandle.prototype.loadNextPage = function() {
   this._limit += this.perPage;
   this._limitListeners.changed();
+
   // how many Loads
   this._loadedTimes ++;
-
-  this._skipTimes = this._loadedTimes - 1;
+  if (this._limit > this.skipStart) {
+    this._skipTimes ++;
+    this._skipTimesListeners.changed();
+  }
   this.getTotal();
 }
 
@@ -79,6 +86,10 @@ PaginatedSubscriptionHandle.prototype.reset = function() {
   //  How many times skipped
   this._skipTimes = 0;
   this._skipTimesListeners.changed();
+
+  this._loaded = 0;
+  this._loadedListeners.changed();
+  //  How many skipped items
 }
 //  How many items to skip
 PaginatedSubscriptionHandle.prototype.skip = function() {
@@ -89,8 +100,7 @@ PaginatedSubscriptionHandle.prototype.skip = function() {
 
 //  Load skipped files
 PaginatedSubscriptionHandle.prototype.loadPreviuosPage = function() {
-
-  if ((this._loaded - this._skip) === this.perPage * 2 ) {
+  if (this._skipTimes > 0) {
     this._loadedTimes --;
     this._skipTimes --;
     this._skipTimesListeners.changed();
@@ -105,7 +115,7 @@ Meteor.subscribeWithPagination = function (/*name, arguments, perPage */) {
   var args = Array.prototype.slice.call(arguments, 0);
   var perPage = args.pop();
 
-  var handle = new PaginatedSubscriptionHandle(perPage, args[1], (args[2] ? args[2] : {}));
+  var handle = new PaginatedSubscriptionHandle(perPage, args[1], (args[2] ? args[2] : {}), (args[3] ? args[3] : perPage));
 
   Meteor.autorun(function() {
     var ourArgs = _.map(args, function(arg) {
