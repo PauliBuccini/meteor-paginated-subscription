@@ -55,6 +55,7 @@ PaginatedSubscriptionHandle.prototype.loading = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.loadNextPage = function() {
+  Sessio.set('loaderOn', true)
   this._limit += this.perPage;
   this._limitListeners.changed();
 
@@ -68,6 +69,7 @@ PaginatedSubscriptionHandle.prototype.loadNextPage = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.done = function() {
+  // Session.set('pagSub_' + this.subName, true)
   // XXX: check if subs that are canceled before they are ready ever fire ready?
   // if they do we need to increase loaded by perPage, not set it to limit
   //  dadeta skip cancelingas
@@ -75,6 +77,7 @@ PaginatedSubscriptionHandle.prototype.done = function() {
   this._skipTimes = this._skipTimes;
   this._loadedListeners.changed();
   this._skipTimesListeners.changed();
+  Session.set('loaderOn', false)
 }
 
 PaginatedSubscriptionHandle.prototype.reset = function() {
