@@ -55,7 +55,7 @@ PaginatedSubscriptionHandle.prototype.loading = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.loadNextPage = function() {
-  Sessio.set('loaderOn', true)
+  Session.set('loaderOn', true);
   this._limit += this.perPage;
   this._limitListeners.changed();
 
