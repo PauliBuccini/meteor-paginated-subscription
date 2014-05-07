@@ -30,7 +30,8 @@ PaginatedSubscriptionHandle.prototype.getTotal = function() {
   if (res) {
     Session.set("total_" + self.subName, res)
     self._total = res
-  }
+  } else if (err)
+    console.log(err)
   // return res
  })
 }
@@ -46,6 +47,7 @@ PaginatedSubscriptionHandle.prototype.limit = function() {
 }
 
 PaginatedSubscriptionHandle.prototype.ready = function() {
+  // this.getTotal();
   return this.loaded() === this.limit() && this.loaded() < this._total;
 }
 
